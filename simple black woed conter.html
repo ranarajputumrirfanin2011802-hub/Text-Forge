@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter | Black & Red</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 2px solid #ff2c2c;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #ff2c2c;
+            text-shadow: 0 0 10px rgba(255, 44, 44, 0.5);
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .stats-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .text-input {
+            width: 100%;
+            min-height: 400px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #f5f5f5;
+            border: 2px solid #333;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #ff2c2c;
+            box-shadow: 0 0 15px rgba(255, 44, 44, 0.3);
+        }
+        
+        .stats-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            height: 100%;
+            border: 1px solid #333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-box {
+            background: #252525;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ff2c2c;
+            transition: transform 0.3s;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 44, 44, 0.2);
+        }
+        
+        .stat-title {
+            font-size: 0.95rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff2c2c;
+        }
+        
+        .keyword-density {
+            margin-top: 30px;
+            background: #252525;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .keyword-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #ff2c2c;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .keyword-list {
+            list-style: none;
+        }
+        
+        .keyword-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .keyword-item:last-child {
+            border-bottom: none;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-clear {
+            background-color: #ff2c2c;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background-color: #e52121;
+            box-shadow: 0 0 15px rgba(255, 44, 44, 0.4);
+        }
+        
+        .btn-copy {
+            background-color: #333;
+            color: #f5f5f5;
+        }
+        
+        .btn-copy:hover {
+            background-color: #444;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 20px;
+            color: #aaa;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
+            width: 100%;
+        }
+        
+        .highlight {
+            color: #ff2c2c;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* Pulse animation for values */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-font"></i> WORD COUNTER TOOL</h1>
+            <p class="description">Analyze your text in real-time with detailed statistics and a sleek black & red theme</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <textarea class="text-input" placeholder="Start typing or paste your text here..."></textarea>
+                <div class="buttons">
+                    <button class="btn btn-clear" id="clear-btn">
+                        <i class="fas fa-broom"></i> Clear Text
+                    </button>
+                    <button class="btn btn-copy" id="copy-btn">
+                        <i class="fas fa-copy"></i> Copy Text
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stats-card">
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-title"><i class="fas fa-font"></i> Words</div>
+                            <div class="stat-value" id="word-count">0</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-title"><i class="fas fa-text-width"></i> Characters</div>
+                            <div class="stat-value" id="char-count">0</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-title"><i class="fas fa-terminal"></i> Sentences</div>
+                            <div class="stat-value" id="sentence-count">0</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-title"><i class="fas fa-paragraph"></i> Paragraphs</div>
+                            <div class="stat-value" id="paragraph-count">0</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-title"><i class="fas fa-graduation-cap"></i> Reading Level</div>
+                            <div class="stat-value" id="reading-level">-</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-title"><i class="fas fa-book-reader"></i> Reading Time</div>
+                            <div class="stat-value" id="reading-time">0s</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-title"><i class="fas fa-microphone"></i> Speaking Time</div>
+                            <div class="stat-value" id="speaking-time">0s</div>
+                        </div>
+                    </div>
+                    
+                    <div class="keyword-density">
+                        <h3 class="keyword-title"><i class="fas fa-key"></i> Keyword Density</h3>
+                        <ul class="keyword-list" id="keyword-list">
+                            <li class="keyword-item">Start typing to see keyword analysis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Word Counter Tool | Created with <span class="highlight">HTML</span>, <span class="highlight">CSS</span> & <span class="highlight">JavaScript</span></p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.querySelector('.text-input');
+            const clearBtn = document.getElementById('clear-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            
+            // Elements for displaying stats
+            const wordCountEl = document.getElementById('word-count');
+            const charCountEl = document.getElementById('char-count');
+            const sentenceCountEl = document.getElementById('sentence-count');
+            const paragraphCountEl = document.getElementById('paragraph-count');
+            const readingLevelEl = document.getElementById('reading-level');
+            const readingTimeEl = document.getElementById('reading-time');
+            const speakingTimeEl = document.getElementById('speaking-time');
+            const keywordListEl = document.getElementById('keyword-list');
+            
+            // Initialize with empty text
+            analyzeText('');
+            
+            // Event listeners
+            textInput.addEventListener('input', function() {
+                analyzeText(this.value);
+            });
+            
+            clearBtn.addEventListener('click', function() {
+                textInput.value = '';
+                analyzeText('');
+                textInput.focus();
+                
+                // Add animation to all stat values
+                document.querySelectorAll('.stat-value').forEach(el => {
+                    el.classList.add('pulse');
+                    setTimeout(() => el.classList.remove('pulse'), 500);
+                });
+            });
+            
+            copyBtn.addEventListener('click', function() {
+                if (textInput.value) {
+                    textInput.select();
+                    document.execCommand('copy');
+                    
+                    // Change button text temporarily
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                }
+            });
+            
+            // Text analysis function
+            function analyzeText(text) {
+                // Word count
+                const words = text.trim() ? text.trim().split(/\s+/) : [];
+                const wordCount = words.length;
+                
+                // Character count
+                const charCount = text.length;
+                
+                // Sentence count
+                const sentenceCount = text.trim() ? text.split(/[.!?]+/).filter(s => s.length > 0).length : 0;
+                
+                // Paragraph count
+                const paragraphCount = text.trim() ? text.split(/\n\s*\n/).filter(p => p.length > 0).length : 0;
+                
+                // Reading level (simplified)
+                const readingLevel = calculateReadingLevel(text, wordCount, sentenceCount);
+                
+                // Reading time (assuming 225 words per minute)
+                const readingTimeMin = wordCount / 225;
+                const readingTimeSec = Math.round(readingTimeMin * 60);
+                
+                // Speaking time (assuming 150 words per minute)
+                const speakingTimeMin = wordCount / 150;
+                const speakingTimeSec = Math.round(speakingTimeMin * 60);
+                
+                // Keyword density
+                const keywordDensity = calculateKeywordDensity(words);
+                
+                // Update UI
+                updateStat(wordCountEl, wordCount);
+                updateStat(charCountEl, charCount);
+                updateStat(sentenceCountEl, sentenceCount);
+                updateStat(paragraphCountEl, paragraphCount);
+                readingLevelEl.textContent = readingLevel;
+                readingTimeEl.textContent = formatTime(readingTimeSec);
+                speakingTimeEl.textContent = formatTime(speakingTimeSec);
+                
+                // Update keyword density list
+                updateKeywordDensityDisplay(keywordDensity);
+            }
+            
+            function updateStat(element, value) {
+                element.textContent = value.toLocaleString();
+                element.classList.add('pulse');
+                setTimeout(() => element.classList.remove('pulse'), 500);
+            }
+            
+            function calculateReadingLevel(text, wordCount, sentenceCount) {
+                if (wordCount === 0) return '-';
+                
+                // Simple algorithm to determine reading level
+                const avgWordsPerSentence = wordCount / sentenceCount;
+                
+                if (avgWordsPerSentence > 20) return 'College';
+                if (avgWordsPerSentence > 15) return 'High School';
+                if (avgWordsPerSentence > 12) return 'Middle School';
+                return 'Elementary';
+            }
+            
+            function formatTime(totalSeconds) {
+                if (totalSeconds === 0) return '0s';
+                
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                
+                if (minutes === 0) return `${seconds}s`;
+                if (seconds === 0) return `${minutes}m`;
+                return `${minutes}m ${seconds}s`;
+            }
+            
+            function calculateKeywordDensity(words) {
+                if (words.length === 0) return [];
+                
+                // Count single words
+                const singleWordCount = {};
+                words.forEach(word => {
+                    const cleanWord = word.toLowerCase().replace(/[^\w]/g, '');
+                    if (cleanWord.length > 3) { // Ignore short words
+                        singleWordCount[cleanWord] = (singleWordCount[cleanWord] || 0) + 1;
+                    }
+                });
+                
+                // Convert to array and sort
+                const singleWordArray = Object.entries(singleWordCount)
+                    .map(([word, count]) => ({ word, count, density: (count / words.length) * 100 }))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 5);
+                
+                return singleWordArray;
+            }
+            
+            function updateKeywordDensityDisplay(keywordDensity) {
+                keywordListEl.innerHTML = '';
+                
+                if (keywordDensity.length === 0) {
+                    keywordListEl.innerHTML = '<li class="keyword-item">No keywords available</li>';
+                    return;
+                }
+                
+                keywordDensity.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'keyword-item';
+                    li.innerHTML = `
+                        <span>${item.word}</span>
+                        <span>${item.count} (${item.density.toFixed(2)}%)</span>
+                    `;
+                    keywordListEl.appendChild(li);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
